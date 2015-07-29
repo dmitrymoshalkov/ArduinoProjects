@@ -70,9 +70,9 @@ typedef struct Program_Type{
 
 
 Program_Type Program[3]={
-    {"Salad",1,0,10,20,0,14,0 },
-    {"Tomato",1,0,10,20,0,14,0},
-    {"Manual", 0,0,0,0,0,0,0} //manual mode always last
+    {"SALAD",1,0,10,20,0,14,0 },
+    {"TOMATO",1,0,10,20,0,14,0},
+    {"MANUAL", 0,0,0,0,0,0,0} //manual mode always last
 };
 
 #define MODEMENU_ITEMS 3
@@ -148,6 +148,8 @@ boolean bFloodStayRun=false; //Запущен таймер нахождения 
 
 U8GLIB_SSD1306_128X64 u8g(5, 4, 10, 2, 3);
 
+CountUpDownTimer MainDisplayTimer(DOWN);
+
 CountUpDownTimer FloodCycleTimer(DOWN);
 CountUpDownTimer FloodStayTimer(DOWN);
 
@@ -220,10 +222,10 @@ void drawMainPage(void)
     
     if ( bFloodCycleRun )
     {
-        sprintf(buffer, "%02lu:%02lu:%02lu", FloodCycleTimer.ShowHours(),FloodCycleTimer.ShowMinutes(),FloodCycleTimer.ShowSeconds());
+        sprintf(buffer, "Waiting for  %02lu:%02lu:%02lu", FloodCycleTimer.ShowHours(),FloodCycleTimer.ShowMinutes(),FloodCycleTimer.ShowSeconds());
     } else if ( bFloodStayRun )
     {
-        sprintf(buffer, "%02lu:%02lu:%02lu", FloodStayTimer.ShowHours(),FloodStayTimer.ShowMinutes(),FloodStayTimer.ShowSeconds());
+        sprintf(buffer, "Flooding for %02lu:%02lu:%02lu", FloodStayTimer.ShowHours(),FloodStayTimer.ShowMinutes(),FloodStayTimer.ShowSeconds());
     }
     
     
@@ -238,62 +240,49 @@ void drawMainPage(void)
     u8g.drawStr( 80, 18, "3500 LUX");
     
     u8g.setFont(u8g_font_6x10);
-    u8g.drawStr( 0, 29, "Outer T:25C HUM: 29%");
-    u8g.drawStr( 0, 39, "Tank  T:29C HUM: 95%");
-    u8g.drawStr( 0, 49, "Level: 95%");
+    u8g.drawStr( 0, 48, "Outer T:25C HUM: 29%");
+    //u8g.drawStr( 0, 39, "Tank  T:29C HUM: 95%");
+    //u8g.drawStr( 0, 49, "Level: 95%");
     
-    u8g.setFont(u8g_font_5x7);
-    u8g.drawStr( 80, 49, buffer);
+    //u8g.setFont(u8g_font_5x7);
+        u8g.setFont(u8g_font_6x10);
+    u8g.drawStr( 0, 33, buffer);
     //u8g.drawStr( 80, 49, "00:20:15");
     
     u8g.setFont(u8g_font_6x10);
-    u8g.drawStr( 0, 60, "Error string here.");
+    u8g.drawStr( 0, 64, "Error string here.");
     
 }
 
 
 void drawMainPage2(void)
 {
-    // graphic commands to redraw the complete screen should be placed here
-    //u8g.setDefaultForegroundColor();
-    //u8g.setDefaultBackgroundColor();
+
     
-    //Serial.println(FloodCycleTimer.ShowMinutes());
-    //Serial.println(FloodCycleTimer.ShowSeconds());
-    
-    
-    char buffer[20];
-    
-    if ( bFloodCycleRun )
-    {
-        sprintf(buffer, "%02lu:%02lu:%02lu", FloodCycleTimer.ShowHours(),FloodCycleTimer.ShowMinutes(),FloodCycleTimer.ShowSeconds());
-    } else if ( bFloodStayRun )
-    {
-        sprintf(buffer, "%02lu:%02lu:%02lu", FloodStayTimer.ShowHours(),FloodStayTimer.ShowMinutes(),FloodStayTimer.ShowSeconds());
-    }
-    
-    
-    
-    u8g.setFont(u8g_font_tpssr);
-    //u8g.drawStr( 0, 15, "Salad");
-    u8g.drawStr( 0, 15, Program[uiCurrentProgram].Name);
+    u8g.setDefaultForegroundColor();
+    u8g.drawBox(7, 0, 12, 60);
+    u8g.setDefaultBackgroundColor();
+    u8g.drawBox(8, 1, 10, 20);
+
+    u8g.setDefaultForegroundColor();
+
     
     
     u8g.setFont(u8g_font_5x7);
-    u8g.drawStr( 80, 8, "5000 LUX");
-    u8g.drawStr( 80, 18, "3500 LUX");
-    
+    u8g.drawStr90(0, 0, "Liquid level");
+
+
     u8g.setFont(u8g_font_6x10);
-    u8g.drawStr( 0, 29, "Outer T:25C HUM: 29%");
-    u8g.drawStr( 0, 39, "Tank  T:29C HUM: 95%");
-    u8g.drawStr( 0, 49, "Level: 95%");
+
+    u8g.drawStr( 27, 8, "Plant tank");
+    u8g.drawStr( 27, 18, "T: 29C HUM: 95%");
+
+ 
+    u8g.drawStr( 27, 35, "Liquid T:   22C");
     
-    u8g.setFont(u8g_font_5x7);
-    u8g.drawStr( 80, 49, buffer);
-    //u8g.drawStr( 80, 49, "00:20:15");
+    u8g.drawStr( 27, 52, "Power usage 999W");
+
     
-    //u8g.setFont(u8g_font_6x10);
-    //u8g.drawStr( 0, 60, "Error string here.");
     
 }
 
@@ -590,50 +579,7 @@ void updatemodeMenu(void) {
     }
 }
 
-/*
- void drawmodeMenu(void) {
- uint8_t i, h;
- u8g_uint_t w, d;
- 
- u8g.setFont(u8g_font_6x13);
- u8g.setFontRefHeightText();
- u8g.setFontPosTop();
- 
- h = u8g.getFontAscent()-u8g.getFontDescent();
- w = u8g.getWidth();
- for( i = 0; i < MODEMENU_ITEMS; i++ ) {
- d = (w-u8g.getStrWidth(modemenu_strings[i]))/2;
- u8g.setDefaultForegroundColor();
- if ( i == modemenu_current ) {
- u8g.drawBox(0, i*h+1, w-2, h);
- u8g.setDefaultBackgroundColor();
- }
- u8g.drawStr(d, i*h, modemenu_strings[i]);
- }
- }
- 
- void updatemodeMenu(void) {
- if ( uiKeyCode != KEY_NONE && last_key_code == uiKeyCode ) {
- return;
- }
- last_key_code = uiKeyCode;
- 
- switch ( uiKeyCode ) {
- case KEY_RIGHT:
- modemenu_current++;
- if ( modemenu_current >= MODEMENU_ITEMS )
- modemenu_current = 0;
- menu_redraw_required = 1;
- break;
- case KEY_LEFT:
- if ( modemenu_current == 0 )
- modemenu_current = MODEMENU_ITEMS;
- modemenu_current--;
- menu_redraw_required = 1;
- break;
- }
- }
- */
+
 
 void drawmanualMenu(void) {
     uint8_t i, h;
@@ -1220,21 +1166,45 @@ void setup() {
         u8g.setHiColorByRGB(255,255,255);
     }
     
+    MainDisplayTimer.SetTimer(0,0,30);
+    MainDisplayTimer.StartTimer();
+    
     menu_redraw_required = 1;     // force initial redraw
     
-    //FloodCycleTimer.SetTimer(1,10,10);
-    //FloodCycleTimer.StartTimer();
+
 }
 
 void loop() {
     
     
     get_key();
-    delay(20);
+    //delay(20);
+    
+    
+    MainDisplayTimer.Timer();
+    
+    if ( MainDisplayTimer.TimeCheck(0,0,0) )
+    {
+        if ( !bMainMenuPage2 )
+        {
+            bMainMenuPage2=true;
+            
+        } else
+        {
+            bMainMenuPage2=false;
+        }
+        
+        
+        MainDisplayTimer.ResetTimer();
+    }
     
     /***************************************************************************************************/
     /*                                      Flood & Light timers                                       */
     /***************************************************************************************************/
+    
+   
+
+    
     
     if ( !bFloodValuesChanged )
     {
