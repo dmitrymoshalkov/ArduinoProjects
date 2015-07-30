@@ -651,6 +651,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		334F57281B681ABC002EEDEE /* Optiboot Arduino Pro Mini ATmega328-5V.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Optiboot Arduino Pro Mini ATmega328-5V.xcconfig"; sourceTree = "<group>"; };
+		334F57291B682F78002EEDEE /* ToDo.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ToDo.txt; sourceTree = "<group>"; };
 		339E72601B67E7180013CFBC /* Index */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Index; sourceTree = BUILT_PRODUCTS_DIR; };
 		339E72631B67E7180013CFBC /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		339E72651B67E7180013CFBC /* Makefile */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
@@ -3143,6 +3145,7 @@
 				339E72B81B67E7180013CFBC /* Makefiles */,
 				339E72D61B67E7190013CFBC /* About */,
 				339E72D81B67E7190013CFBC /* Utilities */,
+				334F57291B682F78002EEDEE /* ToDo.txt */,
 			);
 			path = HydroponicsController3;
 			sourceTree = "<group>";
@@ -3171,6 +3174,7 @@
 				339E72771B67E7180013CFBC /* Arduino Micro.xcconfig */,
 				339E72781B67E7180013CFBC /* Arduino Pro with ATmega328-3.3V.xcconfig */,
 				339E72791B67E7180013CFBC /* Arduino Pro with ATmega328-5V.xcconfig */,
+				334F57281B681ABC002EEDEE /* Optiboot Arduino Pro Mini ATmega328-5V.xcconfig */,
 				339E727A1B67E7180013CFBC /* Arduino Mini with ATmega168.xcconfig */,
 				339E727B1B67E7180013CFBC /* Arduino Mini with ATmega328.xcconfig */,
 				339E727C1B67E7180013CFBC /* Arduino Nano with ATmega168.xcconfig */,
@@ -13806,7 +13810,7 @@
 /* Begin XCBuildConfiguration section */
 		339E72E11B67E7190013CFBC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 339E72791B67E7180013CFBC /* Arduino Pro with ATmega328-5V.xcconfig */;
+			baseConfigurationReference = 334F57281B681ABC002EEDEE /* Optiboot Arduino Pro Mini ATmega328-5V.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -13823,6 +13827,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -13846,6 +13851,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKETCHBOOK_DIR = "";
 				SKETCH_EXTENSION = ino;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
@@ -13867,6 +13873,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -13883,6 +13890,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKETCHBOOK_DIR = "";
 				SKETCH_EXTENSION = ino;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
 		};
@@ -13891,6 +13899,10 @@
 			buildSettings = {
 				BOARD_PORT = "/dev/cu.usbserial-*";
 				BOARD_TAG1 = pro328op;
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -13898,6 +13910,7 @@
 		339E72E51B67E7190013CFBC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BOARD_PORT = "/dev/cu.usbserial-*";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

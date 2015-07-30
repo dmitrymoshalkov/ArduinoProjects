@@ -1,0 +1,14 @@
+//
+//  ToDo
+//  Text
+//  ----------------------------------
+//  Developed with embedXcode
+//
+//  Project 	HydroponicsController3
+//  Created by 	Dmitry Moshalkov on 29.07.15
+//  Copyright 	© 2015 Dmitry Moshalkov
+//  License	<#license#>
+//
+
+1. Сделать таймер на 5 минут для выхода на главный экран - done
+2. При ошибке переключать на второй главный экран и писать ошибку?
