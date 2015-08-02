@@ -35,14 +35,14 @@ typedef struct Errors_Type{
 
 
 Errors_Type Errors[8]={
-    {1,"LIQUID LEVEL LOW!"},
-    {2,"LIGHT DOES NOT WORK!"},
-    {3,"HUMIDITY IS TOO HIGH!"},
-    {4,"OUT HUMIDITY IS TOO LOW!"},
-    {5,"OUT HUMIDITY IS TOO HIGH!"},
-    {6,"OUT HUMIDITY IS TOO LOW!"},
-    {7,"LIQUID TEMP IS TOO HIGH!"},
-    {8,"LIQUID TEMP IS TOO LOW!"}
+    {1,"Liquid level low!"},
+    {2,"Light does not work!"},
+    {3,"Tank humidity high!"},
+    {4,"Tank humidity low!"},
+    {5,"Out humidity high!"},
+    {6,"Out humidity low!"},
+    {7,"Liquid temp high!"},
+    {8,"Liquid temp low!"}
 };
 
 boolean bErrorPresent=false; // true if error exists
@@ -389,20 +389,38 @@ void drawMainPage2(void)
 void drawErrorPage(void)
 {
     
+    uint8_t uiPos=20;
     
     u8g.setDefaultForegroundColor();
+    u8g.drawBox(0, 0, 126, 10);
+
+    u8g.setDefaultBackgroundColor();
     u8g.setFont(u8g_font_tpssr);
-    u8g.drawStr( 27, 5, "ERROR");
+    u8g.drawStr( 48, 9, "ERROR");
     u8g.setDefaultForegroundColor();
     
+    //u8g.setFont(u8g_font_6x10);
     u8g.setFont(u8g_font_6x10);
     
-    u8g.drawStr( 0, 10, "Error 1");
-    u8g.drawStr( 0, 20, "Error 2");
-    u8g.drawStr( 0, 30, "Error 3");
-    u8g.drawStr( 0, 40, "Error 4");
-    u8g.drawStr( 0, 50, "Error 5");
-    u8g.drawStr( 0, 60, "Error 6");
+    for (uint8_t i=0; i<8; i++ )
+    {
+        if ( CurrentErrors[i].uiErorState )
+        {
+            u8g.drawStr( 0, uiPos, Errors[CurrentErrors[i].uiErrorCode-1].cErrorText);
+            uiPos+=10;
+        }
+
+        
+    }
+
+//CurrentErrors
+//Errors
+//    u8g.drawStr( 0, 20, "Error 1");
+//    u8g.drawStr( 0, 30, "Error 2");
+//    u8g.drawStr( 0, 40, "Error 3");
+//    u8g.drawStr( 0, 50, "Error 4");
+//    u8g.drawStr( 0, 60, "Error 5");
+
     
 }
 
@@ -483,7 +501,7 @@ void get_key(void){
             if ( !binsideMainMenu && !binsideModeMenu && !binsideManualMenu && !binsideFloodCycleFreqMenu && !binsideFloodCycleFreqMenu && !binsideLightSettingsMenu && !binsideDateSettingsMenu)
             {
                 
-                if ( !bMainMenuPage2 ) { bMainMenuPage2=true; } else { bMainMenuPage2=false; }
+                if ( !bMainMenuPage2 && !bErrorPage ) { bMainMenuPage2=true; bErrorPage= false; } else if ( bMainMenuPage2 ) { bMainMenuPage2=false; bErrorPage=true; } else if ( bErrorPage ) { bErrorPage=false; bMainMenuPage2=false;}
                 
             }
             
@@ -583,7 +601,7 @@ void get_key(void){
             if ( !binsideMainMenu && !binsideModeMenu && !binsideManualMenu && !binsideFloodCycleFreqMenu && !binsideFloodCycleFreqMenu && !binsideLightSettingsMenu && !binsideDateSettingsMenu)
             {
             
-                if ( !bMainMenuPage2 ) { bMainMenuPage2=true; } else { bMainMenuPage2=false; }
+                if ( !bMainMenuPage2 && !bErrorPage) { bMainMenuPage2=false; bErrorPage=true; } else if (bErrorPage){ bMainMenuPage2=true; bErrorPage=false;} else if ( bMainMenuPage2 ) { bMainMenuPage2=false; bErrorPage=false;}
                    
             }
             
@@ -1290,6 +1308,10 @@ void setup() {
     
     menu_redraw_required = 1;     // force initial redraw
     
+    //CurrentErrors[4].uiErorState=true;
+    //CurrentErrors[4].uiErrorCode=2;
+    //CurrentErrors[7].uiErorState=true;
+    //CurrentErrors[7].uiErrorCode=5;
 
 }
 
@@ -1304,15 +1326,17 @@ void loop() {
     
     if ( MainDisplayTimer.TimeCheck(0,0,0) )
     {
-        if ( !bMainMenuPage2 )
+        if ( !bErrorPage )
         {
-            bMainMenuPage2=true;
+            if ( !bMainMenuPage2 )
+            {
+                bMainMenuPage2=true;
             
-        } else
-        {
-            bMainMenuPage2=false;
+            } else
+            {
+                bMainMenuPage2=false;
+            }
         }
-        
         
         MainDisplayTimer.ResetTimer();
     }
@@ -1412,7 +1436,7 @@ void loop() {
         u8g.firstPage();
         do {
             
-                if ( !bMainMenuPage2 ) { drawMainPage(); } else {drawMainPage2();}
+            if ( !bMainMenuPage2 && !bErrorPage ) { drawMainPage(); } else if (!bErrorPage && bMainMenuPage2) {drawMainPage2();} else if (bErrorPage) {drawErrorPage();}
         } while( u8g.nextPage() );
         //menu_redraw_required = 0;
         //}
