@@ -27,14 +27,35 @@
 
 //Errors
 
-#define ERROR_LOW_LIQUID        "LIQUID LEVEL LOW!"
-#define ERROR_LIGHT_PROBLEM     "LIGHT DOES NOT WORK!"
-#define ERROR_HIGH_HUMIDITY_ENV     "HUMIDITY IS TOO HIGH!"
-#define ERROR_LOW_HUMIDITY_ENV     "OUT HUMIDITY IS TOO LOW!"
-#define ERROR_HIGH_TEMP_ENV     "OUT HUMIDITY IS TOO HIGH!"
-#define ERROR_LOW_TEMP_ENV     "OUT HUMIDITY IS TOO LOW!"
-#define ERROR_HIGH_TEMP_LIQUID     "LIQUID TEMP IS TOO HIGH!"
-#define ERROR_LOW_TEMP_LIQUID     "LIQUID TEMP IS TOO LOW!"
+
+typedef struct Errors_Type{
+    uint8_t  uiErrorCode;
+    char     cErrorText[30];
+} Errors_Type;
+
+
+Errors_Type Errors[8]={
+    {1,"LIQUID LEVEL LOW!"},
+    {2,"LIGHT DOES NOT WORK!"},
+    {3,"HUMIDITY IS TOO HIGH!"},
+    {4,"OUT HUMIDITY IS TOO LOW!"},
+    {5,"OUT HUMIDITY IS TOO HIGH!"},
+    {6,"OUT HUMIDITY IS TOO LOW!"},
+    {7,"LIQUID TEMP IS TOO HIGH!"},
+    {8,"LIQUID TEMP IS TOO LOW!"}
+};
+
+boolean bErrorPresent=false; // true if error exists
+//uint8_t uiNumOfErrors=0; //количество необработанных ошибок
+//uint8_t uiLastError=0;
+
+typedef struct CurrentErrors_Type{
+    uint8_t  uiErrorCode;
+    boolean  uiErorState;
+} CurrentErrors_Type;
+
+CurrentErrors_Type CurrentErrors[8];
+
 
 
 //Pins
@@ -50,7 +71,7 @@ boolean bFloodValuesChanged=false;
 boolean bLightValuesChanged=false;
 
 boolean bMainMenuPage2=false; //Отобразить второй основной информационный экран
-
+boolean bErrorPage=false; //Отобразить экран ошибок
 
 //Текущие значения параметров окружающей среды
 int currentOuterHum;
@@ -168,7 +189,70 @@ CountUpDownTimer FloodCycleTimer(DOWN);
 CountUpDownTimer FloodStayTimer(DOWN);
 
 
+/***************************************************************************************/
+/*            Display error or warning and light error led                              */
+/***************************************************************************************/
 
+
+void displayError ( uint8_t uiErrorCode, uint8_t uiSeverity, boolean bAdd)
+{
+    // uiSeverity = 0 - no error, remove previous notification, uiSeverity = 1 - Warning, uiSeverity = 2 - Error
+    // bAdd = true - add error, bAdd = false - remove error
+    // Light status led on/off
+    
+
+    if ( bAdd )
+    {
+        uint8_t i=0;
+        
+        while ( CurrentErrors[i].uiErorState)
+        {
+            i++;
+        }
+        
+            CurrentErrors[i].uiErrorCode=uiErrorCode;
+            CurrentErrors[i].uiErorState=true;
+            bErrorPresent = true;
+    }
+    
+    
+
+    
+    
+}
+
+
+void clearErrors ( uint8_t uiErrorCode )
+{
+    //Очищать ошибки в функциях датчиков при переходе значений из значения в значение
+    // По последней ошибке - перевести bErrorPresent в false
+    
+    uint8_t uiPos=0;
+    
+    bErrorPresent = false;
+    
+    for (int i=0; i < (sizeof(CurrentErrors)/sizeof(CurrentErrors[0])); i++)
+    {
+        if (CurrentErrors[i].uiErrorCode == uiErrorCode)
+        {
+            CurrentErrors[i].uiErorState = false;
+        }
+
+        if ( CurrentErrors[i].uiErorState )
+        {
+            bErrorPresent = true;
+        }
+        
+    }
+    
+    if ( !bErrorPresent )
+    {
+        // Погасить светодиод ошибок
+    }
+    
+    
+    
+}
 
 
 /***************************************************************************************/
@@ -300,6 +384,27 @@ void drawMainPage2(void)
     
 }
 
+
+
+void drawErrorPage(void)
+{
+    
+    
+    u8g.setDefaultForegroundColor();
+    u8g.setFont(u8g_font_tpssr);
+    u8g.drawStr( 27, 5, "ERROR");
+    u8g.setDefaultForegroundColor();
+    
+    u8g.setFont(u8g_font_6x10);
+    
+    u8g.drawStr( 0, 10, "Error 1");
+    u8g.drawStr( 0, 20, "Error 2");
+    u8g.drawStr( 0, 30, "Error 3");
+    u8g.drawStr( 0, 40, "Error 4");
+    u8g.drawStr( 0, 50, "Error 5");
+    u8g.drawStr( 0, 60, "Error 6");
+    
+}
 
 
 //функция для определения номера нажатой кнопки
